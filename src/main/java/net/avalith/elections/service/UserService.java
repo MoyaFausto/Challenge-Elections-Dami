@@ -1,49 +1,55 @@
 package net.avalith.elections.service;
 
+import net.avalith.elections.Utils.ErrorMessage;
+import net.avalith.elections.entities.UserListResponse;
 import net.avalith.elections.model.User;
-import net.avalith.elections.repository.UserJpaRepository;
+import net.avalith.elections.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class UserService {
 
     @Autowired
-    private UserJpaRepository userJpaRepository;
+    private UserRepository userJpaRepository;
 
     public User save(User user){
+
+        UUID id = UUID.randomUUID();
+        user.setId(id);
         return this.userJpaRepository.save(user);
     }
 
-    public Optional<User> findById(int id){
-        return this.userJpaRepository.findById(id);
+    public User findById(Integer id){
+
+        return this.userJpaRepository.findById(id)
+                .orElseThrow(() -> new HttpClientErrorException(HttpStatus.BAD_REQUEST, ErrorMessage.USER_NOT_FOUND));
     }
 
-    public boolean delete(int id){
-        Optional<User> optionalUser = this.userJpaRepository.findById(id);
-        if(optionalUser.isPresent()){
-            this.userJpaRepository.delete(optionalUser.get());
-            return true;
-        }
-        return false;
+    public void delete(Integer id){
+
+        User user= this.userJpaRepository.findById(id)
+                .orElseThrow(() -> new HttpClientErrorException(HttpStatus.BAD_REQUEST, ErrorMessage.USER_NOT_FOUND));
+        this.userJpaRepository.delete(user);
     }
 
-    public boolean update(User user , int id){
-        Optional<User> optionalUser = this.userJpaRepository.findById(id);
-        if(optionalUser.isPresent()){
-            User oldUser = optionalUser.get();
-            oldUser.setDni(user.getDni());
-            oldUser.setName(user.getName());
-            this.userJpaRepository.save(oldUser);
-            return true;
-        }
-        return false;
+    public void update(User user , Integer id){
+
+
+        User oldUser= this.userJpaRepository.findById(id)
+                .orElseThrow(() -> new HttpClientErrorException(HttpStatus.BAD_REQUEST, ErrorMessage.USER_NOT_FOUND));
+        oldUser.setDni(user.getDni());
+        oldUser.setName(user.getName());
+        this.userJpaRepository.save(oldUser);
+
     }
-    public List<User> findAll(){
-        return this.userJpaRepository.findAll();
+    public UserListResponse findAll(){
+        return new UserListResponse(this.userJpaRepository.findAll());
     }
 
 
