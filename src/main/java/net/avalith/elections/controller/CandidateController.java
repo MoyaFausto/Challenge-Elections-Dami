@@ -30,19 +30,19 @@ public class CandidateController {
     }
 
     @GetMapping("{id}")
-    public Candidate findById(@PathVariable("id") Integer id){
+    public Candidate findById(@PathVariable("id") String id){
 
         return this.candidateService.findById(id);
     }
 
     @DeleteMapping("{id}")
-    public void delete(@PathVariable("id") Integer id){
+    public void delete(@PathVariable("id") String id){
 
         this.candidateService.delete(id);
     }
 
     @PutMapping("{id}")
-    public void update(@Validated @RequestBody Candidate candidate , @PathVariable("id") Integer id){
+    public void update(@Validated @RequestBody Candidate candidate , @PathVariable("id") String id){
 
         this.candidateService.update(candidate,id);
     }

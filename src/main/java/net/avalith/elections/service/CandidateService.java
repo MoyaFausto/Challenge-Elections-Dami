@@ -27,20 +27,20 @@ public class CandidateService {
         return new CandidateResponse(idString);
     }
 
-    public Candidate findById(Integer id){
+    public Candidate findById(String id){
 
         return this.candidateRepository.findById(id)
                 .orElseThrow(() -> new HttpClientErrorException(HttpStatus.BAD_REQUEST, ErrorMessage.CANDIDATE_NOT_FOUND));
     }
 
-    public void delete(Integer id){
+    public void delete(String id){
 
         Candidate candidate= this.candidateRepository.findById(id)
                 .orElseThrow(() -> new HttpClientErrorException(HttpStatus.BAD_REQUEST, ErrorMessage.CANDIDATE_NOT_FOUND));
         this.candidateRepository.delete(candidate);
     }
 
-    public void update(Candidate candidate , Integer id){
+    public void update(Candidate candidate , String id){
 
 
         Candidate oldCandidate= this.candidateRepository.findById(id)
