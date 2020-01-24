@@ -38,15 +38,13 @@ public class UserController {
     @DeleteMapping("{id}")
     public void delete(@PathVariable("id") String id){
 
-        User user = this.findById(id);
-        this.userService.delete(user);
+        this.userService.delete(id);
     }
 
     @PutMapping("{id}")
     public void update(@Validated @RequestBody User user , @PathVariable("id") String id){
 
-        User oldUser = this.findById(id);
-        this.userService.update(oldUser, user);
+        this.userService.update(user, id);
     }
 
     @GetMapping("")

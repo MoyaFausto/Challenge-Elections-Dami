@@ -21,11 +21,10 @@ public class UserService {
 
     public UserResponse save(User user){
 
-        UUID id = UUID.randomUUID();
-        String idString = id.toString();
-        user.setId(idString);
+        user.setId(UUID.randomUUID().toString());
         this.userJpaRepository.save(user);
-        return new UserResponse(idString);
+
+        return new UserResponse(user.getId());
     }
 
     public User findById(String id){
@@ -34,17 +33,22 @@ public class UserService {
                 .orElseThrow(() -> new HttpClientErrorException(HttpStatus.BAD_REQUEST, ErrorMessage.USER_NOT_FOUND));
     }
 
-    public void delete(User user){
+    public void delete(String id)
+    {
+
+        User user = this.findById(id);
         this.userJpaRepository.delete(user);
     }
 
-    public void update(User oldUser , User newUser){
+    public void update(User newUser, String id){
+
+        User oldUser = this.findById(id);
         oldUser.setDni(newUser.getDni());
         oldUser.setName(newUser.getName());
         this.userJpaRepository.save(oldUser);
-
     }
     public UserListResponse findAll(){
+
         return new UserListResponse(this.userJpaRepository.findAll());
     }
 
