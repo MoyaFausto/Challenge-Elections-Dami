@@ -1,14 +1,9 @@
 package net.avalith.elections.controller;
 
-import net.avalith.elections.Utils.ErrorMessage;
 import net.avalith.elections.entities.UserListResponse;
 import net.avalith.elections.model.User;
 import net.avalith.elections.service.UserService;
-import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
