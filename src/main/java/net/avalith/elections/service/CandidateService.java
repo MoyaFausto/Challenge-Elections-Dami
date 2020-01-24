@@ -33,20 +33,15 @@ public class CandidateService {
                 .orElseThrow(() -> new HttpClientErrorException(HttpStatus.BAD_REQUEST, ErrorMessage.CANDIDATE_NOT_FOUND));
     }
 
-    public void delete(String id){
+    public void delete(Candidate candidate){
 
-        Candidate candidate= this.candidateRepository.findById(id)
-                .orElseThrow(() -> new HttpClientErrorException(HttpStatus.BAD_REQUEST, ErrorMessage.CANDIDATE_NOT_FOUND));
         this.candidateRepository.delete(candidate);
     }
 
-    public void update(Candidate candidate , String id){
+    public void update(Candidate oldCandidate , Candidate newCandidate){
 
-
-        Candidate oldCandidate= this.candidateRepository.findById(id)
-                .orElseThrow(() -> new HttpClientErrorException(HttpStatus.BAD_REQUEST, ErrorMessage.CANDIDATE_NOT_FOUND));
-        oldCandidate.setName(candidate.getName());
-        oldCandidate.setLastname(candidate.getLastname());
+        oldCandidate.setName(newCandidate.getName());
+        oldCandidate.setLastname(newCandidate.getLastname());
         this.candidateRepository.save(oldCandidate);
 
     }

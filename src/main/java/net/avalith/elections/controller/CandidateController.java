@@ -36,15 +36,17 @@ public class CandidateController {
     }
 
     @DeleteMapping("{id}")
-    public void delete(@PathVariable("id") String id){
+    public void delete(@PathVariable("id") String id) {
 
-        this.candidateService.delete(id);
+        Candidate candidate = this.findById(id);
+        this.candidateService.delete(candidate);
     }
 
     @PutMapping("{id}")
-    public void update(@Validated @RequestBody Candidate candidate , @PathVariable("id") String id){
+    public void update(@Validated @RequestBody Candidate newCandidate , @PathVariable("id") String id){
 
-        this.candidateService.update(candidate,id);
+        Candidate oldCandidate = this.findById(id);
+        this.candidateService.update(oldCandidate,newCandidate);
     }
 
     @GetMapping("")
