@@ -2,6 +2,7 @@ package net.avalith.elections.service;
 
 import net.avalith.elections.Utils.ErrorMessage;
 import net.avalith.elections.entities.UserListResponse;
+import net.avalith.elections.entities.UserResponse;
 import net.avalith.elections.model.User;
 import net.avalith.elections.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +19,13 @@ public class UserService {
     @Autowired
     private UserRepository userJpaRepository;
 
-    public User save(User user){
+    public UserResponse save(User user){
 
         UUID id = UUID.randomUUID();
-        user.setId(id.toString());
-        return this.userJpaRepository.save(user);
+        String idString = id.toString();
+        user.setId(idString);
+        this.userJpaRepository.save(user);
+        return new UserResponse(idString);
     }
 
     public User findById(Integer id){

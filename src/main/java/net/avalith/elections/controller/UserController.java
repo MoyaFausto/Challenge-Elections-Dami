@@ -1,6 +1,7 @@
 package net.avalith.elections.controller;
 
 import net.avalith.elections.entities.UserListResponse;
+import net.avalith.elections.entities.UserResponse;
 import net.avalith.elections.model.User;
 import net.avalith.elections.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ public class UserController {
 
 
     @PostMapping("")
-    public User save(@Validated @RequestBody User user){
+    public UserResponse save(@Validated @RequestBody User user){
 
         return this.userService.save(user);
     }
