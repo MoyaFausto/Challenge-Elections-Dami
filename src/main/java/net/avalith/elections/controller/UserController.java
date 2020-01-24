@@ -31,19 +31,19 @@ public class UserController {
     }
 
     @GetMapping("{id}")
-    public User findById(@PathVariable("id") Integer id){
+    public User findById(@PathVariable("id") String id){
 
        return this.userService.findById(id);
     }
 
     @DeleteMapping("{id}")
-    public void delete(@PathVariable("id") Integer id){
+    public void delete(@PathVariable("id") String id){
 
         this.userService.delete(id);
     }
 
     @PutMapping("{id}")
-    public void update(@Validated @RequestBody User user , @PathVariable("id") Integer id){
+    public void update(@Validated @RequestBody User user , @PathVariable("id") String id){
 
         this.userService.update(user,id);
     }

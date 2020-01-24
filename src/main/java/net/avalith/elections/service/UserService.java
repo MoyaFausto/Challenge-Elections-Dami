@@ -28,20 +28,20 @@ public class UserService {
         return new UserResponse(idString);
     }
 
-    public User findById(Integer id){
+    public User findById(String id){
 
         return this.userJpaRepository.findById(id)
                 .orElseThrow(() -> new HttpClientErrorException(HttpStatus.BAD_REQUEST, ErrorMessage.USER_NOT_FOUND));
     }
 
-    public void delete(Integer id){
+    public void delete(String id){
 
         User user= this.userJpaRepository.findById(id)
                 .orElseThrow(() -> new HttpClientErrorException(HttpStatus.BAD_REQUEST, ErrorMessage.USER_NOT_FOUND));
         this.userJpaRepository.delete(user);
     }
 
-    public void update(User user , Integer id){
+    public void update(User user , String id){
 
 
         User oldUser= this.userJpaRepository.findById(id)
