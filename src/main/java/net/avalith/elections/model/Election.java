@@ -17,6 +17,7 @@ import javax.persistence.Table;
 @NoArgsConstructor
 public class Election {
     @Id
+    @JsonProperty(value = "id_election")
     private String id;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -26,6 +27,9 @@ public class Election {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonProperty(value = "end_date")
     private String endDate;
+
+
+   // List<Candidate> candidateList;
 
 
 
