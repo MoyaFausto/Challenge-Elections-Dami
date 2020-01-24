@@ -34,20 +34,13 @@ public class UserService {
                 .orElseThrow(() -> new HttpClientErrorException(HttpStatus.BAD_REQUEST, ErrorMessage.USER_NOT_FOUND));
     }
 
-    public void delete(String id){
-
-        User user= this.userJpaRepository.findById(id)
-                .orElseThrow(() -> new HttpClientErrorException(HttpStatus.BAD_REQUEST, ErrorMessage.USER_NOT_FOUND));
+    public void delete(User user){
         this.userJpaRepository.delete(user);
     }
 
-    public void update(User user , String id){
-
-
-        User oldUser= this.userJpaRepository.findById(id)
-                .orElseThrow(() -> new HttpClientErrorException(HttpStatus.BAD_REQUEST, ErrorMessage.USER_NOT_FOUND));
-        oldUser.setDni(user.getDni());
-        oldUser.setName(user.getName());
+    public void update(User oldUser , User newUser){
+        oldUser.setDni(newUser.getDni());
+        oldUser.setName(newUser.getName());
         this.userJpaRepository.save(oldUser);
 
     }
