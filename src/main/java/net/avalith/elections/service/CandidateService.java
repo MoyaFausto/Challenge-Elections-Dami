@@ -20,11 +20,10 @@ public class CandidateService {
 
     public CandidateResponse save(Candidate candidate){
 
-        UUID id = UUID.randomUUID();
-        String idString = id.toString();
-        candidate.setId(idString);
+        candidate.setId(UUID.randomUUID().toString());
         this.candidateRepository.save(candidate);
-        return new CandidateResponse(idString);
+
+        return new CandidateResponse(candidate.getId());
     }
 
     public Candidate findById(String id){
@@ -33,13 +32,15 @@ public class CandidateService {
                 .orElseThrow(() -> new HttpClientErrorException(HttpStatus.BAD_REQUEST, ErrorMessage.CANDIDATE_NOT_FOUND));
     }
 
-    public void delete(Candidate candidate){
+    public void delete(String id){
 
+        Candidate candidate = this.findById(id);
         this.candidateRepository.delete(candidate);
     }
 
-    public void update(Candidate oldCandidate , Candidate newCandidate){
+    public void update(Candidate newCandidate,  String id){
 
+        Candidate oldCandidate = this.findById(id);
         oldCandidate.setName(newCandidate.getName());
         oldCandidate.setLastname(newCandidate.getLastname());
         this.candidateRepository.save(oldCandidate);
