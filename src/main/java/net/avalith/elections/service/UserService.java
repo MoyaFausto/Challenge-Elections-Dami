@@ -21,7 +21,7 @@ public class UserService {
     public User save(User user){
 
         UUID id = UUID.randomUUID();
-        user.setId(id);
+        user.setId(id.toString());
         return this.userJpaRepository.save(user);
     }
 

@@ -27,7 +27,7 @@ import java.util.UUID;
 public class User {
 
     @Id
-    private UUID id;
+    private String id;
 
     @NotNull(message = "Insert a valid dni")
     @Column(unique = true)
