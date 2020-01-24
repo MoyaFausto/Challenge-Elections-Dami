@@ -20,8 +20,7 @@ import javax.validation.constraints.NotNull;
 @Table(name = "candidates")
 public class Candidate {
     @Id
-    @GeneratedValue
-    private int id;
+    private String id;
 
     @NotBlank
     @NotNull

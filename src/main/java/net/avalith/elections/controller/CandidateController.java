@@ -1,51 +1,55 @@
 package net.avalith.elections.controller;
 
+import net.avalith.elections.entities.CandidateListResponse;
+import net.avalith.elections.entities.CandidateResponse;
 import net.avalith.elections.model.Candidate;
 import net.avalith.elections.service.CandidateService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
-@RequestMapping("api/candidates")
+@RequestMapping("/candidate")
 @RestController
 public class CandidateController {
 
-    private final String CANDIDATE_NOT_FOUND = "The candidate was not found";
 
     @Autowired
     private CandidateService candidateService;
 
 
     @PostMapping("")
-    public Candidate save(@Validated @RequestBody Candidate candidate){
+    public CandidateResponse save(@Validated @RequestBody Candidate candidate){
         return this.candidateService.save(candidate);
     }
 
     @GetMapping("{id}")
-    public Candidate findById(@PathVariable("id") int id){
-        return this.candidateService.findById(id)
-                .orElseThrow(() -> new HttpClientErrorException(HttpStatus.BAD_REQUEST, this.CANDIDATE_NOT_FOUND));
+    public Candidate findById(@PathVariable("id") Integer id){
+
+        return this.candidateService.findById(id);
     }
 
     @DeleteMapping("{id}")
-    public void delete(@PathVariable("id") int id){
-        if(!this.candidateService.delete(id)){
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, this.CANDIDATE_NOT_FOUND);
-        }
+    public void delete(@PathVariable("id") Integer id){
+
+        this.candidateService.delete(id);
     }
 
     @PutMapping("{id}")
-    public void update(@Validated @RequestBody Candidate candidate , @PathVariable("id") int id){
-        if(!this.candidateService.update(candidate , id)){
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST , this.CANDIDATE_NOT_FOUND);
-        }
+    public void update(@Validated @RequestBody Candidate candidate , @PathVariable("id") Integer id){
+
+        this.candidateService.update(candidate,id);
     }
+
     @GetMapping("")
-    public List<Candidate> findAll(){
+    public CandidateListResponse findAll(){
+
         return this.candidateService.findAll();
     }
 

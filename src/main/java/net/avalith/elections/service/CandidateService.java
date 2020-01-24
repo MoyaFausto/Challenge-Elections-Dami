@@ -1,49 +1,57 @@
 package net.avalith.elections.service;
 
+import net.avalith.elections.Utils.ErrorMessage;
+import net.avalith.elections.entities.CandidateListResponse;
+import net.avalith.elections.entities.CandidateResponse;
 import net.avalith.elections.model.Candidate;
-import net.avalith.elections.repository.CandidateJpaRepository;
+import net.avalith.elections.repository.CandidateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class CandidateService {
 
     @Autowired
-    private CandidateJpaRepository candidateJpaRepository;
+    private CandidateRepository candidateRepository;
 
-    public Candidate save(Candidate candidate){
-        return this.candidateJpaRepository.save(candidate);
+    public CandidateResponse save(Candidate candidate){
+
+        UUID id = UUID.randomUUID();
+        String idString = id.toString();
+        candidate.setId(idString);
+        this.candidateRepository.save(candidate);
+        return new CandidateResponse(idString);
     }
 
-    public Optional<Candidate> findById(int id){
-        return this.candidateJpaRepository.findById(id);
+    public Candidate findById(Integer id){
+
+        return this.candidateRepository.findById(id)
+                .orElseThrow(() -> new HttpClientErrorException(HttpStatus.BAD_REQUEST, ErrorMessage.CANDIDATE_NOT_FOUND));
     }
 
-    public boolean delete(int id){
-        Optional<Candidate> optionalCandidate = this.candidateJpaRepository.findById(id);
-        if(optionalCandidate.isPresent()){
-            this.candidateJpaRepository.delete(optionalCandidate.get());
-            return true;
-        }
-        return false;
+    public void delete(Integer id){
+
+        Candidate candidate= this.candidateRepository.findById(id)
+                .orElseThrow(() -> new HttpClientErrorException(HttpStatus.BAD_REQUEST, ErrorMessage.CANDIDATE_NOT_FOUND));
+        this.candidateRepository.delete(candidate);
     }
 
-    public boolean update(Candidate candidate , int id){
-        Optional<Candidate> optionalCandidate = this.candidateJpaRepository.findById(id);
-        if(optionalCandidate.isPresent()){
-            Candidate oldCandidate = optionalCandidate.get();
-            oldCandidate.setName(candidate.getName());
-            oldCandidate.setLastname(candidate.getLastname());
-            this.candidateJpaRepository.save(oldCandidate);
-            return true;
-        }
-        return false;
+    public void update(Candidate candidate , Integer id){
+
+
+        Candidate oldCandidate= this.candidateRepository.findById(id)
+                .orElseThrow(() -> new HttpClientErrorException(HttpStatus.BAD_REQUEST, ErrorMessage.CANDIDATE_NOT_FOUND));
+        oldCandidate.setName(candidate.getName());
+        oldCandidate.setLastname(candidate.getLastname());
+        this.candidateRepository.save(oldCandidate);
+
     }
-    public List<Candidate> findAll(){
-        return this.candidateJpaRepository.findAll();
+    public CandidateListResponse findAll(){
+        return new CandidateListResponse(this.candidateRepository.findAll());
     }
 
 
