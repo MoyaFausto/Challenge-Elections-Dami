@@ -20,25 +20,22 @@ public class CandidateService {
 
     public CandidateResponse save(Candidate candidate){
 
-        candidate.setId(UUID.randomUUID().toString());
-        this.candidateRepository.save(candidate);
-
-        return new CandidateResponse(candidate.getId());
+        return new CandidateResponse(this.candidateRepository.save(candidate).getId());
     }
 
-    public Candidate findById(String id){
+    public Candidate findById(Integer id){
 
         return this.candidateRepository.findById(id)
                 .orElseThrow(() -> new HttpClientErrorException(HttpStatus.BAD_REQUEST, ErrorMessage.CANDIDATE_NOT_FOUND));
     }
 
-    public void delete(String id){
+    public void delete(Integer id){
 
         Candidate candidate = this.findById(id);
         this.candidateRepository.delete(candidate);
     }
 
-    public void update(Candidate newCandidate,  String id){
+    public void update(Candidate newCandidate,  Integer id){
 
         Candidate oldCandidate = this.findById(id);
         oldCandidate.setName(newCandidate.getName());

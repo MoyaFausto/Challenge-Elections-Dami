@@ -6,5 +6,5 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class CandidateResponse {
-    private String id;
+    private Integer id;
 }
