@@ -3,8 +3,10 @@ package net.avalith.elections.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -22,6 +24,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Table(name = "election_candidate",
         uniqueConstraints = @UniqueConstraint(name = "unq_election_candidate",columnNames = {"election_id" , "candidate_id"}))
 public class ElectionCandidate {
@@ -41,6 +44,7 @@ public class ElectionCandidate {
     private Candidate candidate;
 
     @JsonIgnore
+    @ToString.Exclude
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "electionCandidate")
-    private List<UserByElectionCandidate> userByElectionCandidates;
+    private List<Vote> votes;
 }

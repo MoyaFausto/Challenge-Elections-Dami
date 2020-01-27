@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -23,6 +24,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @ToString
+@Builder
 @NoArgsConstructor
 @Table(name = "elections")
 public class Election {
@@ -43,6 +45,7 @@ public class Election {
     private LocalDateTime endDate;
 
     @JsonIgnore
+    @ToString.Exclude
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "election")
     private List<ElectionCandidate> electionCandidates;
 }

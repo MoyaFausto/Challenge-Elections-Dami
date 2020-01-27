@@ -1,6 +1,7 @@
 package net.avalith.elections.model;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -16,16 +17,17 @@ import javax.persistence.UniqueConstraint;
 
 @Data
 @Entity
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "user_by_election_candidate",
+@Table(name = "votes",
         uniqueConstraints = @UniqueConstraint(
-                name = "unq_user_election_candidate",
+                name = "unq_vote_user_election_candidate",
                 columnNames = {"user_id", "election_candidate_id"}
                 )
 )
 @ToString
-public class UserByElectionCandidate {
+public class Vote {
     @Id
     @GeneratedValue
     private Integer id;

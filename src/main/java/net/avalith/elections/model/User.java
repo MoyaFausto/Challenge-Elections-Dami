@@ -48,6 +48,7 @@ public class User {
     private String lastname;
 
     @JsonIgnore
+    @ToString.Exclude
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
-    private List<UserByElectionCandidate> userByElectionCandidateList;
+    private List<Vote> votes;
 }

@@ -42,6 +42,7 @@ public class Candidate {
     @NotNull
     private String lastname;
 
+    @ToString.Exclude
     @JsonIgnore
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "candidate")
     private List<ElectionCandidate> electionCandidates;

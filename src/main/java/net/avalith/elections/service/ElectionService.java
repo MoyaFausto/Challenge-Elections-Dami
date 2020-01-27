@@ -7,7 +7,6 @@ import net.avalith.elections.entities.ElectionResponse;
 import net.avalith.elections.model.Candidate;
 import net.avalith.elections.model.Election;
 import net.avalith.elections.model.ElectionCandidate;
-import net.avalith.elections.model.UserByElectionCandidate;
 import net.avalith.elections.repository.ElectionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +17,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,7 +35,7 @@ public class ElectionService {
     private ElectionCandidateService electionCandidateService;
 
     @Autowired
-    private UserByElectionCandidateService userByElectionCandidateService;
+    private VoteService voteService;
 
     public ElectionResponse save(ElectionRequest electionRequest){
 
@@ -54,17 +52,16 @@ public class ElectionService {
                 .map(c -> this.candidateService.findById(c))
                 .collect(Collectors.toList());
 
-        //Creating a new empty election and then insert it the dates.
-        Election election = new Election();
-        election.setElectionCandidates(new ArrayList<>());
-        election.setStartDate(startDate);
-        election.setEndDate(endDate);
-
+        //Creating a new empty election and then insert the dates.
         //save the election
-        election = this.electionRepository.save(election);
+        final Election election = this.electionRepository.save(Election.builder()
+                .startDate(startDate)
+                .endDate(endDate)
+                .electionCandidates(new ArrayList<>())
+                .build());
 
         //Loop candidates and create a new ElectionCandidate
-        for(Candidate candidate : candidates){
+        candidates.forEach(candidate ->  {
             ElectionCandidate electionCandidate = new ElectionCandidate();
             electionCandidate.setCandidate(candidate);
             electionCandidate.setElection(election);
@@ -77,7 +74,7 @@ public class ElectionService {
             //update candidate with the new Election Candidate
             candidate.getElectionCandidates().add(electionCandidate);
             this.candidateService.save(candidate);
-        }
+        });
 
         return new ElectionResponse(election.getId());
     }
@@ -102,8 +99,8 @@ public class ElectionService {
         oldElection.setElectionCandidates(newElection.getElectionCandidates());
 
         this.electionRepository.save(oldElection);
-
     }
+
     public ElectionListResponse findAll(){
         return new ElectionListResponse(this.electionRepository.findAll());
     }

@@ -1,6 +1,7 @@
 package net.avalith.elections.service;
 
 import net.avalith.elections.Utils.ErrorMessage;
+import net.avalith.elections.entities.CandidatesOfAnElectionResult;
 import net.avalith.elections.model.ElectionCandidate;
 import net.avalith.elections.repository.ElectionCandidateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,12 @@ public class ElectionCandidateService {
 
     @Autowired
     private ElectionCandidateRepository electionCandidateRepository;
+
+    @Autowired
+    private ElectionService electionService;
+
+    @Autowired
+    private CandidateService candidateService;
 
     public Integer save(ElectionCandidate electionCandidate){
 
@@ -39,6 +46,16 @@ public class ElectionCandidateService {
         oldElectionCandidate.setElection(newElectionCandidate.getElection());
 
         this.electionCandidateRepository.save(oldElectionCandidate);
+    }
+
+    public CandidatesOfAnElectionResult getAllCandidates(Integer id){
+
+        return new CandidatesOfAnElectionResult(this.electionCandidateRepository.getCandidatesByElectionId(id));
+    }
+
+    public ElectionCandidate getByCandidateAndElection(Integer electionId, Integer candidateId){
+
+        return this.electionCandidateRepository.getByCandidateAndElection(candidateId,electionId);
     }
 
 }
