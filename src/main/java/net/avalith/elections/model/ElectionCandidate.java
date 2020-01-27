@@ -3,10 +3,10 @@ package net.avalith.elections.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -14,36 +14,37 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import javax.persistence.UniqueConstraint;
 import java.util.List;
 
-@Data
 @Entity
+@Data
 @AllArgsConstructor
-@ToString
 @NoArgsConstructor
-@Table(name = "candidates")
-public class Candidate {
+@Builder
+@Table(name = "election_candidate",
+        uniqueConstraints = @UniqueConstraint(name = "unq_election_candidate",columnNames = {"election_id" , "candidate_id"}))
+public class ElectionCandidate {
+
     @Id
     @GeneratedValue
     private Integer id;
 
-    @NotBlank
-    @NotNull
-    private String name;
+    @JsonIgnoreProperties("electionCandidates")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "election_id")
+    private Election election;
 
-    @NotBlank
-    @NotNull
-    private String lastname;
+    @JsonIgnoreProperties("electionCandidates")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "candidate_id")
+    private Candidate candidate;
 
-    @ToString.Exclude
     @JsonIgnore
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "candidate")
-    private List<ElectionCandidate> electionCandidates;
+    @ToString.Exclude
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "electionCandidate")
+    private List<Vote> votes;
 }
