@@ -55,7 +55,9 @@ public class ElectionCandidateService {
 
     public ElectionCandidate getByCandidateAndElection(Integer electionId, Integer candidateId){
 
-        return this.electionCandidateRepository.getByCandidateAndElection(candidateId,electionId);
+        return this.electionCandidateRepository.getByCandidateAndElection(candidateId,electionId).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, ErrorMessage.ELECTION_CANDIDATE_NOT_FOUND)
+        );
     }
 
 }

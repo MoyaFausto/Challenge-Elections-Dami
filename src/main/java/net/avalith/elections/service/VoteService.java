@@ -23,7 +23,6 @@ public class VoteService {
 
     private final Logger logger = LoggerFactory.getLogger(VoteService.class);
 
-
     @Autowired
     private VoteRepository voteRepository;
 
@@ -51,9 +50,6 @@ public class VoteService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ErrorMessage.USER_HAS_ALREADY_VOTED);
 
         ElectionCandidate electionCandidate = this.electionCandidateService.getByCandidateAndElection(electionId,candidateId);
-
-        if(Objects.isNull(electionCandidate))
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ErrorMessage.ELECTION_CANDIDATE_NOT_FOUND);
 
         this.voteRepository.save(Vote
                 .builder()

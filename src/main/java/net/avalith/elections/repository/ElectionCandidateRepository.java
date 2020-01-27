@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ElectionCandidateRepository extends JpaRepository<ElectionCandidate, Integer> {
@@ -20,5 +21,5 @@ public interface ElectionCandidateRepository extends JpaRepository<ElectionCandi
     List<CandidateView> getCandidatesByElectionId(@Param("id") Integer id);
 
     @Query(value = getByCandidateAndElection, nativeQuery = true)
-    ElectionCandidate getByCandidateAndElection(@Param("cid") Integer candidateId, @Param("eid") Integer electionId);
+    Optional<ElectionCandidate> getByCandidateAndElection(@Param("cid") Integer candidateId, @Param("eid") Integer electionId);
 }
