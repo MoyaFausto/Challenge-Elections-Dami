@@ -71,9 +71,6 @@ public class ElectionService {
             electionCandidate.setId(this.electionCandidateService.save(electionCandidate));
 
             //update election with the new Election Candidate
-            //i need to get the election from repository because otherwise hibernate will add the election multiple times.
-            election = this.findById(election.getId());
-
             election.getElectionCandidates().add(electionCandidate);
             this.electionRepository.save(election);
 

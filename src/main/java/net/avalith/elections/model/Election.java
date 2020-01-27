@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -21,6 +22,7 @@ import java.util.List;
 @Entity
 @Data
 @AllArgsConstructor
+@ToString
 @NoArgsConstructor
 @Table(name = "elections")
 public class Election {
