@@ -41,22 +41,18 @@ public class ElectionService {
 
     public ElectionResponse save(ElectionRequest electionRequest){
 
-
         LocalDateTime startDate = electionRequest.getStartDate();
         LocalDateTime endDate = electionRequest.getEndDate();
 
-
         //checking valid dates
         if(endDate.isBefore(startDate) || endDate.isEqual(startDate))
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    ErrorMessage.START_DATE_IS_GREATER_THAN_OR_EQUAL_TO_END_DATE);
-
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ErrorMessage.INVALID_RANGE_DATES);
 
         //get candidate entities by id
-        List<Candidate> candidates = electionRequest.getCandidateIds().stream()
-                                        .map(c -> this.candidateService.findById(c))
-                                        .collect(Collectors.toList());
-
+        List<Candidate> candidates = electionRequest.getCandidateIds()
+                .stream()
+                .map(c -> this.candidateService.findById(c))
+                .collect(Collectors.toList());
 
         //Creating a new empty election and then insert it the dates.
         Election election = new Election();
@@ -75,7 +71,6 @@ public class ElectionService {
             electionCandidate.setId(this.electionCandidateService.save(electionCandidate));
 
             //update election with the new Election Candidate
-
             //i need to get the election from repository because otherwise hibernate will add the election multiple times.
             election = this.findById(election.getId());
 
