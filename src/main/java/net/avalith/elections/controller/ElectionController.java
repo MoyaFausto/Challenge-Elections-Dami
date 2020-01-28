@@ -98,7 +98,7 @@ public class ElectionController {
        return this.voteService.getElectionResult(id_election);
     }
 
-    @Scheduled(fixedRateString = "${history.time}")
+    @Scheduled(cron = "${history.time}")
     public void generateHistory(){
         this.electionHistoryService.generateHistory(this.findAll());
     }
