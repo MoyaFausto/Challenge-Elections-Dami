@@ -3,8 +3,7 @@ package net.avalith.elections.controller;
 import net.avalith.elections.entities.CandidateVoteRequest;
 import net.avalith.elections.entities.FakeUserQuantityRequest;
 import net.avalith.elections.entities.MessageResponse;
-import net.avalith.elections.model.User;
-import net.avalith.elections.service.FakeUserService;
+import net.avalith.elections.service.UserService;
 import net.avalith.elections.service.VoteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,21 +12,19 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @RequestMapping("/non-alcoholic-beer")
 @RestController
 public class FakeUserController {
 
     @Autowired
-    private FakeUserService fakeUserService;
+    private UserService userService;
 
     @Autowired
     private VoteService voteService;
 
     @PostMapping("")
     public MessageResponse addFakeUser(@RequestBody FakeUserQuantityRequest fakeUserRequest){
-        return this.fakeUserService.generateFakeUser(fakeUserRequest.getQuantity());
+        return this.userService.generateFakeUser(fakeUserRequest.getQuantity());
     }
 
     @PostMapping("{id}")
