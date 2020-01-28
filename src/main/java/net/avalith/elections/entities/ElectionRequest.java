@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 @Data
-@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 public class ElectionRequest {

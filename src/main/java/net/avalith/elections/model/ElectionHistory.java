@@ -1,5 +1,6 @@
 package net.avalith.elections.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,29 +14,31 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import java.sql.Timestamp;
 
 @Data
-@Entity
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "votes",
-        uniqueConstraints = @UniqueConstraint(
-                name = "unq_vote_user_election_candidate",
-                columnNames = {"user_id", "election_candidate_id"}
-                )
-)
-public class Vote {
+@Builder
+@Entity
+@Table(name = "election_histories")
+public class ElectionHistory {
     @Id
     @GeneratedValue
     private Integer id;
 
+    @JsonIgnoreProperties("electionHistories")
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "candidate_id")
+    private Candidate candidate;
 
+    @JsonIgnoreProperties("electionHistories")
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "election_candidate_id")
-    private ElectionCandidate electionCandidate;
+    @JoinColumn(name = "election_id")
+    private Election election;
+
+    private Float percentage;
+    private Timestamp date;
+    private Integer votes;
+
 }

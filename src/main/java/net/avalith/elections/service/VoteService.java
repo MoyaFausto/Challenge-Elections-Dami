@@ -3,6 +3,7 @@ package net.avalith.elections.service;
 import net.avalith.elections.Utils.ErrorMessage;
 import net.avalith.elections.entities.CandidateVotes;
 import net.avalith.elections.entities.ElectionVotes;
+import net.avalith.elections.entities.FakeUsers;
 import net.avalith.elections.entities.MessageResponse;
 import net.avalith.elections.model.Candidate;
 import net.avalith.elections.model.Election;
@@ -87,21 +88,24 @@ public class VoteService {
         this.voteRepository.save(oldVote);
     }
 
+    private CandidateVotes createCandidateVotes(ElectionCandidate ec){
+        Candidate candidate = ec.getCandidate();
+        Integer quantityVotes = ec.getVotes().size();
+        return CandidateVotes.builder()
+                .first_name(candidate.getName())
+                .last_name(candidate.getLastname())
+                .id_candidate(candidate.getId())
+                .votes(quantityVotes)
+                .build();
+    }
+
     public ElectionVotes getElectionResult(Integer id){
 
         Election election = this.electionService.findById(id);
 
         List<CandidateVotes> candidateVotes = election.getElectionCandidates().stream()
-                .map(ec -> {
-                    Candidate candidate = ec.getCandidate();
-                    Integer quantityVotes = ec.getVotes().size();
-                    return CandidateVotes.builder()
-                            .first_name(candidate.getName())
-                            .last_name(candidate.getLastname())
-                            .id_candidate(candidate.getId())
-                            .votes(quantityVotes)
-                            .build();
-                }).collect(Collectors.toList());
+                .map(this::createCandidateVotes)
+                .collect(Collectors.toList());
 
         Integer totalVotes = candidateVotes.stream()
                 .map(CandidateVotes::getVotes)
@@ -112,6 +116,22 @@ public class VoteService {
                 .total_votes(totalVotes)
                 .candidates(candidateVotes)
                 .build();
+    }
+
+    public MessageResponse fakeVote(Integer electionId, Integer candidateId){
+
+        List<User> fakeUsers = this.userService.findFakes();
+
+        fakeUsers = fakeUsers.stream()
+                .filter(u -> u.getVotes().stream().noneMatch(v -> v.getElectionCandidate().getElection().getId().equals(electionId)))
+                .collect(Collectors.toList());
+
+        if(fakeUsers.isEmpty())
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,ErrorMessage.FAKE_USERS_CANNOT_VOTE);
+
+        fakeUsers.forEach(fu -> this.save(electionId,candidateId,fu.getId()));
+
+        return new MessageResponse("Votos generados correctamente");
     }
 
 }

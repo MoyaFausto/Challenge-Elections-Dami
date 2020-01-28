@@ -11,7 +11,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@ToString
 @Builder
 public class ElectionVotes {
     private Integer id_election;

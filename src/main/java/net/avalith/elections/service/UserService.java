@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -23,9 +24,14 @@ public class UserService {
     public UserResponse save(User user){
 
         user.setId(UUID.randomUUID().toString());
+        user.setIsFake(0);
         this.userJpaRepository.save(user);
 
         return new UserResponse(user.getId());
+    }
+
+    public void save(List<User> users){
+        this.userJpaRepository.saveAll(users);
     }
 
     public User findById(String id){
@@ -54,5 +60,8 @@ public class UserService {
         return new UserListResponse(this.userJpaRepository.findAll());
     }
 
+    public List<User> findFakes(){
+        return this.userJpaRepository.findByIsFake(1);
+    }
 
 }
