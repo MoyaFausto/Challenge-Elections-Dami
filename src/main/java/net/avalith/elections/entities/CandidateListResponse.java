@@ -1,5 +1,6 @@
 package net.avalith.elections.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.ToString;
@@ -11,5 +12,6 @@ import java.util.List;
 @AllArgsConstructor
 @ToString
 public class CandidateListResponse {
+    @JsonIgnoreProperties("id")
     List<Candidate> candidates;
 }

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -30,7 +31,7 @@ public class UserService {
     public User findById(String id){
 
         return this.userJpaRepository.findById(id)
-                .orElseThrow(() -> new HttpClientErrorException(HttpStatus.BAD_REQUEST, ErrorMessage.USER_NOT_FOUND));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, ErrorMessage.USER_NOT_FOUND));
     }
 
     public void delete(String id)
@@ -45,6 +46,7 @@ public class UserService {
         User oldUser = this.findById(id);
         oldUser.setDni(newUser.getDni());
         oldUser.setName(newUser.getName());
+        oldUser.setLastname(newUser.getLastname());
         this.userJpaRepository.save(oldUser);
     }
     public UserListResponse findAll(){
