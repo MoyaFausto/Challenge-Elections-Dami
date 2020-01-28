@@ -1,6 +1,8 @@
 package net.avalith.elections.service;
 
 import net.avalith.elections.Utils.ErrorMessage;
+import net.avalith.elections.entities.CandidateVotes;
+import net.avalith.elections.entities.ElectionVotes;
 import net.avalith.elections.entities.MessageResponse;
 import net.avalith.elections.model.Candidate;
 import net.avalith.elections.model.Election;
@@ -15,8 +17,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class VoteService {
@@ -80,6 +85,33 @@ public class VoteService {
         oldVote.setUser(newVote.getUser());
 
         this.voteRepository.save(oldVote);
+    }
+
+    public ElectionVotes getElectionResult(Integer id){
+
+        Election election = this.electionService.findById(id);
+
+        List<CandidateVotes> candidateVotes = election.getElectionCandidates().stream()
+                .map(ec -> {
+                    Candidate candidate = ec.getCandidate();
+                    Integer quantityVotes = ec.getVotes().size();
+                    return CandidateVotes.builder()
+                            .first_name(candidate.getName())
+                            .last_name(candidate.getLastname())
+                            .id_candidate(candidate.getId())
+                            .votes(quantityVotes)
+                            .build();
+                }).collect(Collectors.toList());
+
+        Integer totalVotes = candidateVotes.stream()
+                .map(CandidateVotes::getVotes)
+                .reduce(0, Integer::sum);
+
+        return ElectionVotes.builder()
+                .id_election(id)
+                .total_votes(totalVotes)
+                .candidates(candidateVotes)
+                .build();
     }
 
 }

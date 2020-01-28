@@ -5,6 +5,7 @@ import net.avalith.elections.entities.CandidatesOfAnElectionResult;
 import net.avalith.elections.entities.ElectionListResponse;
 import net.avalith.elections.entities.ElectionRequest;
 import net.avalith.elections.entities.ElectionResponse;
+import net.avalith.elections.entities.ElectionVotes;
 import net.avalith.elections.entities.MessageResponse;
 import net.avalith.elections.model.Election;
 import net.avalith.elections.service.ElectionCandidateService;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequestMapping("/election")
@@ -79,4 +81,8 @@ public class ElectionController {
         return this.voteService.save(idElection,candidateId.getCandidate_id(),userId);
     }
 
+    @GetMapping("election")
+    public ElectionVotes getElectionResult(@RequestParam Integer id_election){
+       return this.voteService.getElectionResult(id_election);
+    }
 }
