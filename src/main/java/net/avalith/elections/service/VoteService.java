@@ -11,6 +11,7 @@ import net.avalith.elections.model.ElectionCandidate;
 import net.avalith.elections.model.User;
 import net.avalith.elections.model.Vote;
 import net.avalith.elections.repository.VoteRepository;
+import org.apache.tomcat.jni.Local;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -44,6 +46,11 @@ public class VoteService {
     @Autowired
     private ElectionService electionService;
 
+    private boolean isActiveElection(Election election){
+        LocalDateTime now = LocalDateTime.now();
+        return election.getEndDate().isAfter(now) && election.getStartDate().isBefore(now);
+    }
+
     public MessageResponse save(Integer electionId, Integer candidateId, String userId){
 
         User user = this.userService.findById(userId);
@@ -52,6 +59,9 @@ public class VoteService {
                 .stream()
                 .anyMatch(v -> v.getElectionCandidate().getElection().getId().equals(electionId)))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ErrorMessage.USER_HAS_ALREADY_VOTED);
+
+        if(!isActiveElection(this.electionService.findById(electionId)))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ErrorMessage.INACTIVE_ELECTION);
 
         ElectionCandidate electionCandidate = this.electionCandidateService.getByCandidateAndElection(electionId,candidateId);
 
