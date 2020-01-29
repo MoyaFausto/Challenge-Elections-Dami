@@ -80,13 +80,14 @@ public class UserService {
         if(Objects.isNull(fakeUsers))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ErrorMessage.FAILURE_GENERATING_FAKE_USERS);
 
+
         List<User> users = fakeUsers.getResults().stream()
                 .map(fakeUser -> User.builder()
                         .name(fakeUser.getName().getFirst())
                         .lastname(fakeUser.getName().getLast())
                         .isFake(1)
                         .id(UUID.randomUUID().toString())
-                        .dni(Integer.parseInt(fakeUser.getId().getValue()))
+                        .dni(Integer.parseInt(fakeUser.getId().getValue().replaceAll("[^\\d.]", "")))
                         .build())
                 .collect(Collectors.toList());
 
