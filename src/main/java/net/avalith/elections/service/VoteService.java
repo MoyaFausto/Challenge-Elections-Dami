@@ -97,12 +97,14 @@ public class VoteService {
     }
 
     private CandidateVotes createCandidateVotes(ElectionCandidate ec){
+
         Candidate candidate = ec.getCandidate();
         Integer quantityVotes = ec.getVotes().size();
+
         return CandidateVotes.builder()
-                .first_name(candidate.getName())
-                .last_name(candidate.getLastname())
-                .id_candidate(candidate.getId())
+                .firstName(candidate.getName())
+                .lastName(candidate.getLastname())
+                .idCandidate(candidate.getId())
                 .votes(quantityVotes)
                 .build();
     }
@@ -120,8 +122,8 @@ public class VoteService {
                 .reduce(0, Integer::sum);
 
         return ElectionVotes.builder()
-                .id_election(id)
-                .total_votes(totalVotes)
+                .idElection(id)
+                .totalVotes(totalVotes)
                 .candidates(candidateVotes)
                 .build();
     }

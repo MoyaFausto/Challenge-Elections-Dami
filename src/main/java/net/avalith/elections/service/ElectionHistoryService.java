@@ -48,9 +48,7 @@ public class ElectionHistoryService {
 
     public void generateHistory(){
 
-        List<Election> elections = this.electionService.getActiveElections();
-
-        elections.forEach(e -> {
+        this.electionService.getActiveElections().forEach(e -> {
 
             ElectionCandidate electionCandidate = e.getElectionCandidates().stream()
                         .max(Comparator.comparing(ec -> ec.getVotes().size()))

@@ -86,7 +86,7 @@ public class UserService {
                         .lastname(fakeUser.getName().getLast())
                         .isFake(1)
                         .id(UUID.randomUUID().toString())
-                        .dni(10000000 + new Random().nextInt(50000000))
+                        .dni(Integer.parseInt(fakeUser.getId().getValue()))
                         .build())
                 .collect(Collectors.toList());
 

@@ -4,13 +4,11 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class FakeUser {
-    private FakeUserDetails name;
-    private FakeUserId id;
+public class FakeUserId {
+    private String value;
 }
