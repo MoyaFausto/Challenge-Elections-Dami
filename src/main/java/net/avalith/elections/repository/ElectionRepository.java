@@ -9,7 +9,7 @@ import java.util.List;
 
 @Repository
 public interface ElectionRepository extends JpaRepository<Election, Integer> {
-    String queryGetActiveElections = "select * from elections where end_date > now()";
+    String queryGetActiveElections = "select * from elections where start_date < now() and end_date > now()";
 
     @Query(value = queryGetActiveElections, nativeQuery = true)
     List<Election> getActiveElections();
