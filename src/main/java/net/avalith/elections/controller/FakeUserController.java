@@ -30,6 +30,6 @@ public class FakeUserController {
     @PostMapping("{id}")
     public MessageResponse vote(@PathVariable("id")Integer id, @RequestBody CandidateVoteRequest candidate){
 
-        return this.voteService.fakeVote(id,candidate.getCandidate_id());
+        return this.voteService.fakeVote(id,candidate.getCandidateId());
     }
 }

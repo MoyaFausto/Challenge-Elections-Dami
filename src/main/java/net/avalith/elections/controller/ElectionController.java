@@ -89,7 +89,7 @@ public class ElectionController {
             @RequestHeader("USER_ID") String userId,
             @RequestBody CandidateVoteRequest candidateId){
 
-        return this.voteService.save(idElection,candidateId.getCandidate_id(),userId);
+        return this.voteService.save(idElection,candidateId.getCandidateId(),userId);
     }
 
     @GetMapping("election")
