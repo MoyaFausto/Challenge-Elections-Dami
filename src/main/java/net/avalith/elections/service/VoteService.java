@@ -47,12 +47,10 @@ public class VoteService {
     public MessageResponse save(Integer electionId, Integer candidateId, String userId){
 
         User user = this.userService.findById(userId);
-        Optional<Vote> vote = user.getVotes()
-                .stream()
-                .filter(v -> v.getElectionCandidate().getElection().getId().equals(electionId))
-                .findFirst();
 
-        if(vote.isPresent())
+        if(user.getVotes()
+                .stream()
+                .anyMatch(v -> v.getElectionCandidate().getElection().getId().equals(electionId)))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ErrorMessage.USER_HAS_ALREADY_VOTED);
 
         ElectionCandidate electionCandidate = this.electionCandidateService.getByCandidateAndElection(electionId,candidateId);

@@ -6,8 +6,12 @@ import net.avalith.elections.entities.ElectionResponse;
 import net.avalith.elections.entities.ElectionVotes;
 import net.avalith.elections.model.Candidate;
 import net.avalith.elections.model.Election;
+import net.avalith.elections.model.ElectionCandidate;
 import net.avalith.elections.model.ElectionHistory;
+import net.avalith.elections.model.Vote;
 import net.avalith.elections.repository.ElectionHistoryRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +27,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class ElectionHistoryService {
+
+    Logger logger = LoggerFactory.getLogger(ElectionHistoryService.class);
 
     @Autowired
     private ElectionHistoryRepository electionHistoryRepository;
@@ -40,31 +46,29 @@ public class ElectionHistoryService {
         this.electionHistoryRepository.save(electionHistory);
     }
 
-    public void generateHistory(ElectionListResponse electionListResponse){
+    public void generateHistory(){
 
-        List<ElectionVotes> electionVotes = electionListResponse.getElections().stream()
-                .filter(e -> e.getEndDate().isAfter(LocalDateTime.now()))
-                .map(e -> this.voteService.getElectionResult(e.getId()))
-                .collect(Collectors.toList());
+        List<Election> elections = this.electionService.getActiveElections();
 
-        electionVotes.forEach(ev -> {
+        elections.forEach(e -> {
 
-            CandidateVotes candidateVotes = ev.getCandidates().stream()
-                    .max(Comparator.comparing(CandidateVotes::getVotes))
-                    .orElseThrow(NoSuchElementException::new);
+            ElectionCandidate electionCandidate = e.getElectionCandidates().stream()
+                        .max(Comparator.comparing(ec -> ec.getVotes().size()))
+                        .orElseThrow(NoSuchElementException::new);
 
-            Candidate candidate = this.candidateService.findById(candidateVotes.getId_candidate());
-            Election election = this.electionService.findById(ev.getId_election());
+            int totalVotes = e.getElectionCandidates().stream()
+                    .mapToInt(ec -> ec.getVotes().size())
+                    .sum();
 
-            ElectionHistory electionHistory = ElectionHistory.builder()
-                    .election(election)
-                    .candidate(candidate)
-                    .percentage(((float) candidateVotes.getVotes() / (float)ev.getTotal_votes() * 100))
-                    .votes(candidateVotes.getVotes())
+            Integer candidateVotes = electionCandidate.getVotes().size();
+
+            this.save(ElectionHistory.builder()
+                    .candidate(electionCandidate.getCandidate())
+                    .votes(candidateVotes)
+                    .election(e)
+                    .percentage((float)candidateVotes / (float)totalVotes * 100)
                     .date(Timestamp.from(Instant.now()))
-                    .build();
-
-            this.save(electionHistory);
+                    .build());
         });
     }
 }
