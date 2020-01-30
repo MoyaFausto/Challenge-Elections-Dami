@@ -5,12 +5,16 @@ import net.avalith.elections.entities.CandidatesOfAnElectionResult;
 import net.avalith.elections.entities.ElectionListResponse;
 import net.avalith.elections.entities.ElectionRequest;
 import net.avalith.elections.entities.ElectionResponse;
+import net.avalith.elections.entities.ElectionVotes;
 import net.avalith.elections.entities.MessageResponse;
 import net.avalith.elections.model.Election;
 import net.avalith.elections.service.ElectionCandidateService;
+import net.avalith.elections.service.ElectionHistoryService;
 import net.avalith.elections.service.ElectionService;
 import net.avalith.elections.service.VoteService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,7 +24,12 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RequestMapping("/election")
 @RestController
@@ -34,6 +43,9 @@ public class ElectionController {
 
     @Autowired
     private ElectionCandidateService electionCandidateService;
+
+    @Autowired
+    private ElectionHistoryService electionHistoryService;
 
 
     @PostMapping("")
@@ -67,6 +79,7 @@ public class ElectionController {
 
     @GetMapping("{id}/candidate")
     public CandidatesOfAnElectionResult getAllCandidates(@PathVariable("id") Integer id){
+
         return this.electionCandidateService.getAllCandidates(id);
     }
 
@@ -76,7 +89,18 @@ public class ElectionController {
             @RequestHeader("USER_ID") String userId,
             @RequestBody CandidateVoteRequest candidateId){
 
-        return this.voteService.save(idElection,candidateId.getCandidate_id(),userId);
+        return this.voteService.save(idElection,candidateId.getCandidateId(),userId);
     }
 
+    @GetMapping("election")
+    public ElectionVotes getElectionResult(@RequestParam Integer id_election){
+
+       return this.voteService.getElectionResult(id_election);
+    }
+
+    @Scheduled(fixedRateString = "${history.time}")
+    public void generateHistory(){
+
+        this.electionHistoryService.generateHistory();
+    }
 }
