@@ -23,7 +23,6 @@ import java.util.List;
 @Entity
 @Data
 @AllArgsConstructor
-@ToString
 @Builder
 @NoArgsConstructor
 @Table(name = "elections")
@@ -48,4 +47,9 @@ public class Election {
     @ToString.Exclude
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "election")
     private List<ElectionCandidate> electionCandidates;
+
+    @ToString.Exclude
+    @JsonIgnore
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "election")
+    private List<ElectionHistory> electionHistories;
 }

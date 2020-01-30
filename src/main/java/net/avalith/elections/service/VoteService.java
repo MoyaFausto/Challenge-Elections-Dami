@@ -1,6 +1,9 @@
 package net.avalith.elections.service;
 
 import net.avalith.elections.Utils.ErrorMessage;
+import net.avalith.elections.entities.CandidateVotes;
+import net.avalith.elections.entities.ElectionVotes;
+import net.avalith.elections.entities.FakeUsers;
 import net.avalith.elections.entities.MessageResponse;
 import net.avalith.elections.model.Candidate;
 import net.avalith.elections.model.Election;
@@ -8,6 +11,7 @@ import net.avalith.elections.model.ElectionCandidate;
 import net.avalith.elections.model.User;
 import net.avalith.elections.model.Vote;
 import net.avalith.elections.repository.VoteRepository;
+import org.apache.tomcat.jni.Local;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +19,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class VoteService {
@@ -38,16 +46,22 @@ public class VoteService {
     @Autowired
     private ElectionService electionService;
 
+    private boolean isActiveElection(Election election){
+        LocalDateTime now = LocalDateTime.now();
+        return election.getEndDate().isAfter(now) && election.getStartDate().isBefore(now);
+    }
+
     public MessageResponse save(Integer electionId, Integer candidateId, String userId){
 
         User user = this.userService.findById(userId);
-        Optional<Vote> vote = user.getVotes()
-                .stream()
-                .filter(v -> v.getElectionCandidate().getElection().getId().equals(electionId))
-                .findFirst();
 
-        if(vote.isPresent())
+        if(user.getVotes()
+                .stream()
+                .anyMatch(v -> v.getElectionCandidate().getElection().getId().equals(electionId)))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ErrorMessage.USER_HAS_ALREADY_VOTED);
+
+        if(!isActiveElection(this.electionService.findById(electionId)))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ErrorMessage.INACTIVE_ELECTION);
 
         ElectionCandidate electionCandidate = this.electionCandidateService.getByCandidateAndElection(electionId,candidateId);
 
@@ -80,6 +94,54 @@ public class VoteService {
         oldVote.setUser(newVote.getUser());
 
         this.voteRepository.save(oldVote);
+    }
+
+    private CandidateVotes createCandidateVotes(ElectionCandidate ec){
+
+        Candidate candidate = ec.getCandidate();
+        Integer quantityVotes = ec.getVotes().size();
+
+        return CandidateVotes.builder()
+                .firstName(candidate.getName())
+                .lastName(candidate.getLastname())
+                .idCandidate(candidate.getId())
+                .votes(quantityVotes)
+                .build();
+    }
+
+    public ElectionVotes getElectionResult(Integer id){
+
+        Election election = this.electionService.findById(id);
+
+        List<CandidateVotes> candidateVotes = election.getElectionCandidates().stream()
+                .map(this::createCandidateVotes)
+                .collect(Collectors.toList());
+
+        Integer totalVotes = candidateVotes.stream()
+                .map(CandidateVotes::getVotes)
+                .reduce(0, Integer::sum);
+
+        return ElectionVotes.builder()
+                .idElection(id)
+                .totalVotes(totalVotes)
+                .candidates(candidateVotes)
+                .build();
+    }
+
+    public MessageResponse fakeVote(Integer electionId, Integer candidateId){
+
+        List<User> fakeUsers = this.userService.findFakes();
+
+        fakeUsers = fakeUsers.stream()
+                .filter(u -> u.getVotes().stream().noneMatch(v -> v.getElectionCandidate().getElection().getId().equals(electionId)))
+                .collect(Collectors.toList());
+
+        if(fakeUsers.isEmpty())
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,ErrorMessage.FAKE_USERS_CANNOT_VOTE);
+
+        fakeUsers.forEach(fu -> this.save(electionId,candidateId,fu.getId()));
+
+        return new MessageResponse("Votos generados correctamente");
     }
 
 }

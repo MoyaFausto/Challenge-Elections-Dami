@@ -104,4 +104,8 @@ public class ElectionService {
     public ElectionListResponse findAll(){
         return new ElectionListResponse(this.electionRepository.findAll());
     }
+
+    public List<Election> getActiveElections() {
+        return this.electionRepository.getActiveElections();
+    }
 }
