@@ -1,6 +1,7 @@
 package net.avalith.elections.service;
 
 import net.avalith.elections.Utils.ErrorMessage;
+import net.avalith.elections.Utils.Utilities;
 import net.avalith.elections.entities.FakeUsers;
 import net.avalith.elections.entities.MessageResponse;
 import net.avalith.elections.entities.UserListResponse;
@@ -8,6 +9,7 @@ import net.avalith.elections.entities.UserResponse;
 import net.avalith.elections.model.User;
 import net.avalith.elections.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
@@ -27,9 +29,18 @@ public class UserService {
     @Autowired
     private UserRepository userJpaRepository;
 
+    @Value("${api.url,randomuser}")
+    private  String apiUrlRandomUser;
+
+    @Autowired
+    Utilities utilities;
+
+    @Autowired
+    RestTemplate restTemplate;
+
     public UserResponse save(User user){
 
-        user.setId(UUID.randomUUID().toString());
+        user.setId(utilities.generateUUID());
         user.setIsFake(0);
         this.userJpaRepository.save(user);
 
@@ -37,6 +48,7 @@ public class UserService {
     }
 
     public void save(List<User> users){
+
         this.userJpaRepository.saveAll(users);
     }
 
@@ -72,9 +84,8 @@ public class UserService {
 
     public MessageResponse generateFakeUser(Integer quantity){
 
-        String apiUsersUrl = "https://randomuser.me/api/?nat=es&results="+quantity;
+        String apiUsersUrl = this.apiUrlRandomUser + "&results=" + quantity;
 
-        RestTemplate restTemplate = new RestTemplate();
         FakeUsers fakeUsers = restTemplate.getForObject(apiUsersUrl, FakeUsers.class);
 
         if(Objects.isNull(fakeUsers))
@@ -86,7 +97,7 @@ public class UserService {
                         .name(fakeUser.getName().getFirst())
                         .lastname(fakeUser.getName().getLast())
                         .isFake(1)
-                        .id(UUID.randomUUID().toString())
+                        .id(fakeUser.getLogin().getUuid())
                         .dni(Integer.parseInt(fakeUser.getId().getValue().replaceAll("[^\\d.]", "")))
                         .build())
                 .collect(Collectors.toList());
