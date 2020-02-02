@@ -72,7 +72,6 @@ public class TestCandidateService {
 
         Candidate candidate = candidateService.findById(id);
 
-
         Assert.assertEquals(candidateExpected , candidate);
         Mockito.verify(candidateRepository,times(1)).findById(id);
     }
