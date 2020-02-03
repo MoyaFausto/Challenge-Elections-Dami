@@ -38,7 +38,7 @@ import static org.mockito.Mockito.when;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @TestExecutionListeners(DependencyInjectionTestExecutionListener.class)
-public class ElectionServiceTest {
+public class TestElectionService {
 
     @Autowired
     ElectionService electionService;
