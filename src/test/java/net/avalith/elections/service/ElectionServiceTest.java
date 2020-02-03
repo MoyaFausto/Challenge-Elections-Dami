@@ -21,6 +21,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -59,6 +60,18 @@ public class ElectionServiceTest {
         MockitoAnnotations.initMocks(this);
     }
 
+
+    @Test(expected = ResponseStatusException.class)
+    public void findByIdNullTest(){
+        Integer id = 1;
+        Election electionNull;
+
+        when(electionRepository.findById(id)).thenReturn(Optional.empty());
+        electionNull = electionService.findById(id);
+
+        Assert.assertNull(electionNull);
+    }
+
     @Test
     public void findByIdTest(){
         Integer id = 1;
@@ -66,14 +79,13 @@ public class ElectionServiceTest {
         Election electionExpected = Election.builder()
                 .id(id)
                 .startDate(LocalDateTime.of(2020,7,31,20,00,00))
-                .endDate(LocalDateTime.of(2020,12git,31,20,00,00)).build();
+                .endDate(LocalDateTime.of(2020,12,31,20,00,00)).build();
 
         when(electionRepository.findById(id)).thenReturn(Optional.of(electionExpected));
 
         Election election = electionService.findById(id);
 
         Assert.assertEquals(electionExpected , election);
-        verify(electionRepository,times(1)).findById(id);
     }
 
 
@@ -92,6 +104,18 @@ public class ElectionServiceTest {
         verify(electionRepository, times(1)).delete(election);
     }
 
+    @Test(expected = ResponseStatusException.class)
+    public void invalidDatesRangeTest(){
+        ElectionRequest electionRequest = ElectionRequest.builder()
+                .startDate(LocalDateTime.of(2020,2,2,14,0,0))
+                .endDate(LocalDateTime.of(2020,1,3,14,0,0))
+                .candidateIds(new HashSet<>(1,2))
+                .build();
+
+        electionService.save(electionRequest);
+
+        Assert.assertTrue(electionRequest.getStartDate().isAfter(electionRequest.getEndDate()));
+    }
     @Test
     public void saveTest(){
 
