@@ -29,7 +29,7 @@ public class UserService {
     @Autowired
     private UserRepository userJpaRepository;
 
-    @Value("${api.url,randomuser}")
+    @Value("${api.url.randomuser}")
     private  String apiUrlRandomUser;
 
     @Autowired

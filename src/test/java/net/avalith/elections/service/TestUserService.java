@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
 @TestExecutionListeners(DependencyInjectionTestExecutionListener.class)
 public class TestUserService {
 
-    @Value("${api.url,randomuser}")
+    @Value("${api.url.randomuser}")
     private  String apiUrlRandomUser;
 
     @Autowired
