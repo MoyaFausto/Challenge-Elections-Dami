@@ -25,6 +25,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 @RunWith(SpringRunner.class)
@@ -54,26 +56,21 @@ public class TestCandidateService {
 
         //test
 
-        Mockito.when(candidateRepository.findAll()).thenReturn(candidates);
+        when(candidateRepository.findAll()).thenReturn(candidates);
         CandidateListResponse candidateListResponse = candidateService.findAll();
 
         Assert.assertEquals(3,candidateListResponse.getCandidates().size());
-        Mockito.verify(candidateRepository, Mockito.times(1)).findAll();
+        verify(candidateRepository, Mockito.times(1)).findAll();
     }
 
     @Test
     public void findByIdTest(){
         Integer id = 1;
-        Candidate candidateExpected =  new Candidate(id,"Damian","Tacconi",
-                new ArrayList<>(), new ArrayList<>());
+        Candidate candidateExpected =  Candidate.builder().id(id).build();
+        when(candidateRepository.findById(id)).thenReturn(Optional.of(candidateExpected));
 
-        Mockito.when(candidateRepository.findById(id))
-                .thenReturn(Optional.of(candidateExpected));
-
-        Candidate candidate = candidateService.findById(id);
-
-        Assert.assertEquals(candidateExpected , candidate);
-        Mockito.verify(candidateRepository,times(1)).findById(id);
+        verify(candidateRepository,times(1)).findById(id);
+        Assert.assertEquals(candidateExpected , candidateService.findById(id));
     }
 
     @Test
@@ -92,7 +89,7 @@ public class TestCandidateService {
 
         CandidateResponse expected = new CandidateResponse(candidateSaved.getId());
 
-        Mockito.when(candidateRepository.save(candidate)).thenReturn(candidateSaved);
+        when(candidateRepository.save(candidate)).thenReturn(candidateSaved);
 
         Assert.assertEquals(expected,candidateService.save(candidate));
     }
@@ -105,10 +102,10 @@ public class TestCandidateService {
                 .lastname("Tacconi")
                 .build();
 
-        Mockito.when(candidateRepository.findById(1)).thenReturn(Optional.ofNullable(candidate));
+        when(candidateRepository.findById(1)).thenReturn(Optional.ofNullable(candidate));
 
         candidateService.delete(1);
-        Mockito.verify(candidateRepository, times(1)).delete(candidate);
+        verify(candidateRepository, times(1)).delete(candidate);
     }
 
     @Test
@@ -127,17 +124,17 @@ public class TestCandidateService {
         Candidate candidateUpdated = Candidate.builder().id(1).name("Martin").lastname("Diaz").build();
 
 
-        Mockito.when(candidateRepository.findById(id)).thenReturn(Optional.ofNullable(oldCandidate));
+        when(candidateRepository.findById(id)).thenReturn(Optional.ofNullable(oldCandidate));
         assert oldCandidate != null;
         oldCandidate.setLastname(newCandidate.getLastname());
         oldCandidate.setName(newCandidate.getName());
 
-        Mockito.when(candidateRepository.save(oldCandidate)).thenReturn(candidateUpdated);
+        when(candidateRepository.save(oldCandidate)).thenReturn(candidateUpdated);
 
         candidateService.update(newCandidate,id);
 
-        Mockito.verify(candidateRepository,times(1)).findById(id);
-        Mockito.verify(candidateRepository,times(1)).save(oldCandidate);
+        verify(candidateRepository,times(1)).findById(id);
+        verify(candidateRepository,times(1)).save(oldCandidate);
     }
 
 }
