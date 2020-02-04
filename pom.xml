@@ -21,6 +21,7 @@
 	<dependencies>
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
@@ -29,6 +30,8 @@
 			<scope>test</scope>
 		</dependency>
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 		<!-- https://mvnrepository.com/artifact/junit/junit -->
@@ -54,6 +57,9 @@
 		</dependency>
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
