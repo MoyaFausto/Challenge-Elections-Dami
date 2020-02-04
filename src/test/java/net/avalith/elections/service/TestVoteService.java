@@ -402,11 +402,8 @@ public class TestVoteService {
     @Test(expected = ResponseStatusException.class)
     public void findByIdNullTest(){
         Integer id = 1;
-        Vote voteNull;
 
         when(voteRepository.findById(id)).thenReturn(Optional.empty());
-        voteNull = voteService.findById(id);
-
-        Assert.assertNull(voteNull);
+        voteService.findById(id);
     }
 }
