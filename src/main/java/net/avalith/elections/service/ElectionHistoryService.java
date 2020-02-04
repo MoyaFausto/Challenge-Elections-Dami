@@ -1,5 +1,6 @@
 package net.avalith.elections.service;
 
+import net.avalith.elections.Utils.Utilities;
 import net.avalith.elections.entities.CandidateVotes;
 import net.avalith.elections.entities.ElectionListResponse;
 import net.avalith.elections.entities.ElectionResponse;
@@ -42,6 +43,9 @@ public class ElectionHistoryService {
     @Autowired
     private CandidateService candidateService;
 
+    @Autowired
+    private Utilities utilities;
+
     public void save(ElectionHistory electionHistory){
         this.electionHistoryRepository.save(electionHistory);
     }
@@ -65,7 +69,7 @@ public class ElectionHistoryService {
                     .votes(candidateVotes)
                     .election(e)
                     .percentage((float)candidateVotes / (float)totalVotes * 100)
-                    .date(Timestamp.from(Instant.now()))
+                    .date(utilities.now())
                     .build());
         });
     }
