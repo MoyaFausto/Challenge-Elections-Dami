@@ -29,12 +29,11 @@ public class ElectionCandidateService {
     public ElectionCandidate findById(Integer id){
 
         return this.electionCandidateRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, ErrorMessage.USER_NOT_FOUND));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, ErrorMessage.ELECTION_CANDIDATE_DOES_NOT_EXISTS));
     }
 
     public void delete(Integer id)
     {
-
         ElectionCandidate electionCandidate = this.findById(id);
         this.electionCandidateRepository.delete(electionCandidate);
     }
