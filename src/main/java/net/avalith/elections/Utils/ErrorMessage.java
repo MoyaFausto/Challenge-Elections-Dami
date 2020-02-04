@@ -10,4 +10,5 @@ public class ErrorMessage {
     public static final String FAILURE_GENERATING_FAKE_USERS = "There was an error generating fake users";
     public static final String FAKE_USERS_CANNOT_VOTE = "There are not any fake users available for this election";
     public static final String INACTIVE_ELECTION = "This election is not active";
+    public static final String ELECTION_CANDIDATE_DOES_NOT_EXISTS = "The election with the candidate does not exists";
 }

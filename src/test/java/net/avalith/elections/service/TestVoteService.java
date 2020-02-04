@@ -99,7 +99,7 @@ public class TestVoteService {
         Integer candidateId = 2;
         Integer electionCandidateId = 5;
 
-        List<User> fakeUsersResponse = Arrays.asList(User.builder().votes(new ArrayList<>()).isFake(1)
+        List<User> fakeUsersResponse = Collections.singletonList(User.builder().votes(new ArrayList<>()).isFake(1)
                 .id("0c358357-620d-4947-983c-16d99ee34fca")
                 .dni(232443)
                 .name("Cosme")
@@ -133,6 +133,7 @@ public class TestVoteService {
         candidate.getElectionCandidates().add(electionCandidate);
         Vote vote = Vote.builder().user(fakeUsersResponse.get(0)).electionCandidate(electionCandidate).build();
 
+        when(voteService.isActiveElection(election)).thenReturn(true);
         when(userService.findFakes()).thenReturn(fakeUsersResponse);
         when(userService.findById(fakeUsersResponse.get(0).getId())).thenReturn(fakeUsersResponse.get(0));
         when(electionService.findById(electionId)).thenReturn(election);
