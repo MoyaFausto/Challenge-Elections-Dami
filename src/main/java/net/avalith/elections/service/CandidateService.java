@@ -41,7 +41,7 @@ public class CandidateService {
         Candidate oldCandidate = this.findById(id);
         oldCandidate.setName(newCandidate.getName());
         oldCandidate.setLastname(newCandidate.getLastname());
-        this.candidateRepository.save(oldCandidate);
+        this.save(oldCandidate);
 
     }
     public CandidateListResponse findAll(){
