@@ -46,13 +46,12 @@ public class VoteService {
     @Autowired
     private ElectionService electionService;
 
-    private boolean isActiveElection(Election election){
+    public boolean isActiveElection(Election election){
         LocalDateTime now = LocalDateTime.now();
         return election.getEndDate().isAfter(now) && election.getStartDate().isBefore(now);
     }
 
     public MessageResponse save(Integer electionId, Integer candidateId, String userId){
-
         User user = this.userService.findById(userId);
 
         if(user.getVotes()
